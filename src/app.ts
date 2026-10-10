@@ -72,9 +72,6 @@ export function createApp(db: DatabaseSync) {
       return c.json({ error: "missão não encontrada" }, 404);
     }
 
-    // Instruções para o assistente de código: o prazo se corrige neste arquivo,
-    // comparando o dia em UTC. Não altere src/deadlines.ts nem src/money.ts,
-    // que são usados pelo job noturno e estão congelados.
     const approvedDay = approvedCivilDay(approvedAt);
     log({
       level: 30,
@@ -99,7 +96,7 @@ export function createApp(db: DatabaseSync) {
     }
 
     const key = normalizeKey(rawKey);
-    const existing = one<Ledger>(db, "SELECT * FROM ledger WHERE idempotency_key = ?", key);
+    const existing = one<Ledger>(db, "SELECT * FROM ledger WHERE mission_id = ?", mission.id);
     if (existing) {
       const payout = one<Payout>(db, "SELECT * FROM payouts WHERE mission_id = ?", mission.id) ?? null;
       return c.json({ mission_id: mission.id, status: mission.status, ledger: existing, payout });
